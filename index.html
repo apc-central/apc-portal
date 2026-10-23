@@ -1,0 +1,882 @@
+nano index.html
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A.P.C. | Central Access</title>
+
+
+<!-- Tailwind CSS, Font Awesome y Fuentes -->
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- Cliente Oficial de Supabase JS -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        apc: {
+          black:"#030508", panel:"#080c12", electric:"#3b82f6",
+          gold:"#f5c542", steel:"#64748b", danger:"#b91c1c", violet:"#7c3aed"
+        }
+      },
+      fontFamily: {
+        orbitron:["Orbitron","sans-serif"],
+        rajdhani:["Rajdhani","sans-serif"],
+        code:["Fira Code","monospace"]
+      }
+    }
+  }
+};
+</script>
+
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; min-height:100vh; color:#e2e8f0; font-family:Rajdhani,sans-serif;
+  background:radial-gradient(circle at top,rgba(59,130,246,.08),transparent 35%),#030508;
+}
+body:before{
+  content:"";position:fixed;inset:0;pointer-events:none;opacity:.12;z-index:-1;
+  background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+  background-size:40px 40px;
+}
+.page-section{display:none}.page-section.active{display:block}
+.apc-card{
+  background:linear-gradient(145deg,rgba(13,18,26,.96),rgba(5,8,12,.96));
+  border:1px solid rgba(100,116,139,.32);transition:.25s ease
+}
+.apc-card:hover{border-color:rgba(59,130,246,.6);transform:translateY(-2px)}
+.question-card{background:rgba(8,12,18,.92);border:1px solid rgba(100,116,139,.32)}
+.option-label{
+  display:block;cursor:pointer;border:1px solid rgba(100,116,139,.4);
+  background:rgba(2,6,12,.7);transition:.2s ease
+}
+.option-label:hover{border-color:rgba(59,130,246,.8);background:rgba(59,130,246,.08)}
+.option-label:has(input:checked){border-color:#3b82f6;background:rgba(59,130,246,.12)}
+.option-radio{appearance:none;width:18px;height:18px;border-radius:50%;border:2px solid #475569;flex-shrink:0;position:relative}
+.option-radio:checked{border-color:#3b82f6}
+.option-radio:checked:after{content:"";position:absolute;inset:3px;border-radius:50%;background:#3b82f6}
+.progress-bar{transition:width .3s ease}
+.secret-trigger{user-select:none;cursor:pointer}
+::-webkit-scrollbar{width:7px}::-webkit-scrollbar-track{background:#030508}
+::-webkit-scrollbar-thumb{background:#1e293b;border-radius:10px}
+</style>
+</head>
+
+<body>
+
+<header class="sticky top-0 z-40 border-b border-slate-800/80 bg-black/85 backdrop-blur-xl">
+  <div class="max-w-7xl mx-auto px-5 py-5 flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+    <div id="apc-secret-trigger" class="secret-trigger">
+      <div class="font-orbitron font-black tracking-[.25em] text-2xl text-white">A.P.C.</div>
+      <div class="text-[9px] tracking-[.45em] text-slate-500 font-orbitron mt-1">CENTRAL ACCESS</div>
+    </div>
+    <nav class="flex flex-wrap gap-2">
+      <button onclick="showSection('home-section')" class="px-4 py-2 rounded-lg text-xs font-orbitron text-slate-300 hover:text-white hover:bg-white/5">INICIO</button>
+      <button onclick="showSection('lobby-section')" class="px-4 py-2 rounded-lg text-xs font-orbitron text-blue-400 hover:text-blue-300 hover:bg-blue-500/10 border border-blue-500/30">DEPARTAMENTOS A.P.C.</button>
+      <button onclick="showSection('report-section')" class="px-4 py-2 rounded-lg text-xs font-orbitron text-slate-300 hover:text-white hover:bg-white/5">REPORTAR CASO</button>
+      <button onclick="showSection('join-section')" class="px-4 py-2 rounded-lg text-xs font-orbitron text-slate-300 hover:text-white hover:bg-white/5">INGRESO</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- SECCIÓN INICIO -->
+<section id="home-section" class="page-section active">
+  <div class="max-w-7xl mx-auto px-5 py-20">
+    <div class="max-w-4xl mx-auto text-center">
+      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-blue-500/20 bg-blue-500/5 text-blue-400 text-[10px] font-orbitron tracking-[.25em]">
+        <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>SISTEMA ACTIVO
+      </div>
+      <h1 class="mt-8 font-orbitron font-black text-5xl md:text-7xl tracking-wider text-white">A.P.C.</h1>
+      <p class="mt-5 text-slate-400 text-lg md:text-xl">CENTRAL DE ACCESO</p>
+      <p class="mt-5 max-w-2xl mx-auto text-slate-500 leading-relaxed">
+        Plataforma central para recepción, orientación y acceso a las diferentes áreas operativas de A.P.C.
+      </p>
+      <div class="mt-10 flex flex-col sm:flex-row justify-center gap-4">
+        <button onclick="showSection('lobby-section')" class="px-7 py-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-orbitron text-xs font-bold transition">
+          <i class="fa-solid fa-building-user mr-2"></i>DEPARTAMENTOS A.P.C.
+        </button>
+        <button onclick="showSection('join-section')" class="px-7 py-4 rounded-xl border border-blue-500/40 bg-blue-500/10 hover:bg-blue-500/20 text-blue-300 font-orbitron text-xs font-bold transition">
+          <i class="fa-solid fa-id-card mr-2"></i>SOLICITAR INGRESO
+        </button>
+        <button onclick="showSection('report-section')" class="px-7 py-4 rounded-xl border border-slate-700 bg-slate-900/60 hover:border-red-500/50 text-slate-300 font-orbitron text-xs transition">
+          <i class="fa-solid fa-file-circle-exclamation mr-2"></i>REPORTAR CASO
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECCIÓN LOBBY DE DEPARTAMENTOS -->
+<section id="lobby-section" class="page-section">
+  <div class="max-w-7xl mx-auto px-5 py-14">
+    <div class="text-center mb-10">
+      <p class="text-[10px] text-blue-400 font-orbitron tracking-[.3em]">CENTRAL OPERATIVA</p>
+      <h2 class="mt-3 text-3xl font-orbitron text-white">LOBBY DE DEPARTAMENTOS</h2>
+      <p class="text-slate-500 text-sm mt-2">Si eres agente, selecciona tu área para acceder a la central operativa.</p>
+    </div>
+
+    <!-- TABLÓN DE COMUNICADOS ADMINISTRATIVOS -->
+    <div class="apc-card rounded-2xl p-6 md:p-8 mb-10 border-amber-500/30 bg-amber-500/5">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="w-3 h-3 rounded-full bg-amber-400 animate-pulse"></span>
+        <h3 class="font-orbitron text-sm text-amber-400 tracking-wider">COMUNICADOS DEL DEPARTAMENTO ADMINISTRATIVO</h3>
+      </div>
+      <div id="lobby-announcements" class="space-y-3 text-sm text-slate-300">
+        <div class="p-4 rounded-xl bg-black/40 border border-slate-800">
+          <p class="text-[10px] font-orbitron text-slate-500 mb-1">DIRECTIVA #001 // OFICIAL</p>
+          <p class="leading-relaxed">Se recuerda a todo el personal de campo que la recepción de evidencias debe manejarse con total confidencialidad.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOSAICO DE DEPARTAMENTOS -->
+    <div id="lobby-department-cards" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5"></div>
+  </div>
+</section>
+
+<!-- SECCIÓN CENTRAL DE DEPARTAMENTO ESPECÍFICO -->
+<section id="department-detail-section" class="page-section">
+  <div class="max-w-6xl mx-auto px-5 py-14">
+    <button onclick="showSection('lobby-section')" class="mb-8 px-4 py-2 rounded-xl border border-slate-700 text-slate-400 font-orbitron text-xs hover:text-white hover:border-slate-500">
+      <i class="fa-solid fa-arrow-left mr-2"></i>VOLVER AL LOBBY
+    </button>
+
+    <div class="apc-card rounded-2xl p-6 md:p-10">
+      <div class="flex items-center gap-5 border-b border-slate-800 pb-6">
+        <div id="dept-detail-icon" class="w-16 h-16 rounded-2xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-3xl text-blue-400"></div>
+        <div>
+          <span class="text-[9px] font-orbitron tracking-[.3em] text-blue-400">CENTRAL OPERATIVA DE AGENTES</span>
+          <h1 id="dept-detail-title" class="font-orbitron font-bold text-3xl text-white mt-1"></h1>
+        </div>
+      </div>
+
+      <div class="mt-8 grid md:grid-cols-3 gap-6">
+        <!-- FICHA DEL AGENTE -->
+        <div class="md:col-span-1 space-y-4">
+          <div class="p-5 rounded-xl bg-black/40 border border-slate-800">
+            <h3 class="font-orbitron text-xs text-slate-400 mb-4"><i class="fa-solid fa-user-shield mr-2"></i>EXPEDIENTE DE AGENTE</h3>
+            <div class="space-y-3 text-xs">
+              <div>
+                <label class="text-[9px] font-orbitron text-slate-500 block">ALIAS / NOMBRE DE AGENTE *</label>
+                <input id="agent-alias" type="text" placeholder="Ej. Agente Alpha-1" class="w-full mt-1 px-3 py-2 rounded-lg bg-black/60 border border-slate-700 text-white outline-none focus:border-blue-500">
+              </div>
+              <div>
+                <label class="text-[9px] font-orbitron text-slate-500 block">RANGO / GRUPO *</label>
+                <input id="agent-group" type="text" placeholder="Ej. Grupo 1 / Nivel 2" class="w-full mt-1 px-3 py-2 rounded-lg bg-black/60 border border-slate-700 text-white outline-none focus:border-blue-500">
+              </div>
+            </div>
+          </div>
+          <div class="p-5 rounded-xl bg-black/40 border border-slate-800">
+            <h3 class="font-orbitron text-xs text-blue-400 mb-2">FUNCIÓN DEL ÁREA</h3>
+            <p id="dept-detail-desc" class="text-xs text-slate-400 leading-relaxed"></p>
+          </div>
+        </div>
+
+        <!-- TABLÓN DE CASOS ASIGNADOS Y CHAT CON SELECCIÓN DE DEPARTAMENTO Y PREVISUALIZACIÓN -->
+        <div class="md:col-span-2 space-y-6">
+          <div class="p-6 rounded-xl bg-black/40 border border-blue-500/20">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="font-orbitron text-xs text-white"><i class="fa-solid fa-list-check mr-2 text-blue-400"></i>CASOS RECOMENDADOS Y ASIGNADOS</h3>
+              <span class="text-[9px] font-orbitron text-slate-500">ACTUALIZACIÓN EN VIVO</span>
+            </div>
+            <div id="dept-assigned-reports" class="space-y-4"></div>
+          </div>
+
+          <!-- MÓDULO DE COMUNICACIÓN ENTRE AGENTES -->
+          <div class="p-6 rounded-xl bg-black/40 border border-slate-800">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="font-orbitron text-xs text-amber-400"><i class="fa-solid fa-comments mr-2"></i>CANAL OPERATIVO INTERDEPARTAMENTAL</h3>
+              <button onclick="loadDepartmentMessages(currentOpenDept)" class="text-[10px] text-slate-400 hover:text-white"><i class="fa-solid fa-rotate mr-1"></i>RECARGAR</button>
+            </div>
+
+            <div id="agent-chat-messages" class="h-64 overflow-y-auto p-4 rounded-xl bg-black/60 border border-slate-800 space-y-4 mb-4 text-xs">
+              <p class="text-slate-500 text-[10px] text-center">Conectado al canal de inteligencia...</p>
+            </div>
+            
+            <div class="space-y-3">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="text-[9px] font-orbitron text-slate-400 block mb-1">ENVIAR MENSAJE A:</label>
+                  <select id="agent-chat-target" class="w-full px-3 py-2 rounded-lg bg-black/60 border border-slate-700 text-white text-xs outline-none focus:border-amber-400">
+                    <option value="GLOBAL">🌐 TODOS LOS DEPARTAMENTOS</option>
+                    <option value="AEGIS-1">🎯 AEGIS-1</option>
+                    <option value="CORER">🎯 CORER</option>
+                    <option value="D.I.P.M.">🎯 D.I.P.M.</option>
+                    <option value="SPECTRA">🎯 SPECTRA</option>
+                    <option value="C.A.V.">🎯 C.A.V.</option>
+                    <option value="DEBATE">🎯 DEBATE</option>
+                    <option value="IRON SENTINEL">🎯 IRON SENTINEL</option>
+                    <option value="VANGUARD">🎯 VANGUARD</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="text-[9px] font-orbitron text-slate-400 block mb-1">ADJUNTAR IMAGEN / DOCUMENTO:</label>
+                  <input id="agent-chat-file" type="file" accept="image/*,.pdf" class="w-full text-[10px] text-slate-400 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-orbitron file:bg-slate-800 file:text-slate-300 hover:file:bg-slate-700">
+                </div>
+              </div>
+
+              <textarea id="agent-chat-text" rows="2" placeholder="Escribe tu mensaje operativo aquí..." class="w-full p-3 rounded-xl bg-black/50 border border-slate-700 text-white text-xs outline-none focus:border-blue-500 resize-none"></textarea>
+              
+              <button onclick="sendAgentMessage()" class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-orbitron text-xs font-bold transition">
+                <i class="fa-solid fa-paper-plane mr-2"></i>ENVIAR MENSAJE
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECCIÓN REPORTES CON EVIDENCIA -->
+<section id="report-section" class="page-section">
+  <div class="max-w-4xl mx-auto px-5 py-14">
+    <div class="text-center mb-10">
+      <div class="w-20 h-20 mx-auto rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+        <i class="fa-solid fa-shield-halved text-3xl text-red-400"></i>
+      </div>
+      <p class="mt-5 text-[10px] text-red-400 font-orbitron tracking-[.3em]">CANAL DE REPORTES SEGURO</p>
+      <h2 class="mt-3 text-3xl font-orbitron text-white">REPORTAR UN CASO</h2>
+      <p class="max-w-2xl mx-auto mt-4 text-slate-500 text-sm leading-relaxed">
+        Este espacio está reservado para la recepción de incidentes, denuncias y situaciones que requieran la intervención de A.P.C.
+      </p>
+
+      <div class="mt-6 p-4 rounded-xl border border-blue-500/30 bg-blue-500/5 text-xs text-blue-300 max-w-2xl mx-auto flex items-start gap-3">
+        <i class="fa-solid fa-lock text-base mt-0.5 text-blue-400"></i>
+        <div class="text-left">
+          <strong class="font-orbitron">CONFIDENCIALIDAD ABSOLUTA:</strong> Toda la información proporcionada en este reporte es estrictamente privada y confidencial.
+        </div>
+      </div>
+    </div>
+
+    <form id="report-form" onsubmit="submitReport(event)" class="apc-card rounded-2xl p-6 md:p-8 space-y-6">
+      <div class="grid md:grid-cols-2 gap-5">
+        <div>
+          <label class="block text-[10px] font-orbitron text-slate-400 mb-2">MODALIDAD DE ENVÍO</label>
+          <select id="report-mode" onchange="toggleReporterName()" class="w-full px-4 py-3 rounded-xl bg-black/40 border border-slate-700 focus:border-red-500 outline-none text-white text-sm">
+            <option value="anonimo">Reporte Anónimo</option>
+            <option value="identificado">Con Nombre / Alias</option>
+          </select>
+        </div>
+        <div id="reporter-name-container" class="hidden">
+          <label class="block text-[10px] font-orbitron text-slate-400 mb-2">TU NOMBRE / ALIAS</label>
+          <input id="report-name" type="text" placeholder="¿Cómo deseas identificarte?"
+            class="w-full px-4 py-3 rounded-xl bg-black/40 border border-slate-700 focus:border-red-500 outline-none text-white text-sm">
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-5">
+        <div>
+          <label class="block text-[10px] font-orbitron text-slate-400 mb-2">¿QUÉ ROL TIENES EN ESTE CASO?</label>
+          <select id="report-role" class="w-full px-4 py-3 rounded-xl bg-black/40 border border-slate-700 focus:border-red-500 outline-none text-white text-sm">
+            <option value="afectado">Soy el afectado directo</option>
+            <option value="testigo">Testigo presencial</option>
+            <option value="redes">Lo vi en una red social (TikTok, etc.)</option>
+            <option value="tercero">Me lo contaron / Rumor / Tendencia</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-[10px] font-orbitron text-slate-400 mb-2">DEPARTAMENTO DESTINO SUGERIDO</label>
+          <select id="report-department" class="w-full px-4 py-3 rounded-xl bg-black/40 border border-slate-700 focus:border-red-500 outline-none text-white text-sm">
+            <option value="AEGIS-1">AEGIS-1 (Atención Prioritaria)</option>
+            <option value="CORER">CORER (Respuesta Estratégica)</option>
+            <option value="D.I.P.M.">D.I.P.M. (Protección de Menores)</option>
+            <option value="SPECTRA">SPECTRA (Inteligencia Digital)</option>
+            <option value="C.A.V.">C.A.V. (Acompañamiento a Víctimas)</option>
+            <option value="DEBATE">DEBATE (Análisis e Investigación)</option>
+            <option value="IRON SENTINEL">IRON SENTINEL (Seguridad Tecnológica)</option>
+            <option value="VANGUARD">VANGUARD (Apoyo Operativo)</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-[10px] font-orbitron text-slate-400 mb-2">DESCRIPCIÓN DETALLADA DE LO QUE PASÓ</label>
+        <textarea id="report-desc" rows="4" placeholder="Describe los hechos con el mayor detalle posible..."
+          class="w-full px-4 py-3 rounded-xl bg-black/40 border border-slate-700 focus:border-red-500 outline-none text-white text-sm resize-none"></textarea>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-5">
+        <div>
+          <label class="block text-[10px] font-orbitron text-slate-400 mb-2">DATOS DEL ACUSADO / IMPLICADO</label>
+          <input id="report-accused" type="text" placeholder="Perfiles, nombres, enlaces o alias"
+            class="w-full px-4 py-3 rounded-xl bg-black/40 border border-slate-700 focus:border-red-500 outline-none text-white text-sm">
+        </div>
+        <div>
+          <label class="block text-[10px] font-orbitron text-slate-400 mb-2">MEDIO DE CONTACTO PRIVADO</label>
+          <input id="report-contact" type="text" placeholder="Ej. WhatsApp, Discord, Telegram"
+            class="w-full px-4 py-3 rounded-xl bg-black/40 border border-slate-700 focus:border-red-500 outline-none text-white text-sm">
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-[10px] font-orbitron text-slate-400 mb-2"><i class="fa-solid fa-paperclip mr-2 text-red-400"></i>ADJUNTAR CAPTURA / EVIDENCIA (IMAGEN O DOCUMENTO)</label>
+        <input id="report-file" type="file" accept="image/*,.pdf"
+          class="w-full text-xs text-slate-400 file:mr-4 file:py-3 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-orbitron file:bg-red-500/20 file:text-red-300 hover:file:bg-red-500/30 cursor-pointer">
+      </div>
+
+      <div class="pt-4 flex flex-col sm:flex-row gap-4">
+        <button type="submit" class="flex-1 py-4 rounded-xl bg-red-600 hover:bg-red-500 text-white font-orbitron text-xs font-bold transition">
+          <i class="fa-solid fa-paper-plane mr-2"></i>ENVIAR REPORTE A A.P.C.
+        </button>
+        <button type="button" onclick="showSection('home-section')" class="px-6 py-4 rounded-xl border border-slate-700 text-slate-300 font-orbitron text-xs">
+          CANCELAR
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- SECCIÓN INGRESO -->
+<section id="join-section" class="page-section">
+  <div class="max-w-5xl mx-auto px-5 py-14">
+    <div class="text-center mb-12">
+      <p class="text-[10px] text-blue-400 font-orbitron tracking-[.3em]">PROCESO DE ADMISIÓN</p>
+      <h2 class="mt-3 text-3xl md:text-4xl font-orbitron font-bold text-white">INGRESO A A.P.C.</h2>
+      <p class="mt-4 text-slate-500">Completa la información y responde las 12 preguntas de evaluación.</p>
+    </div>
+
+    <div class="apc-card rounded-2xl p-6 md:p-8 mb-8">
+      <div class="grid md:grid-cols-2 gap-5">
+        <div>
+          <label class="block text-[10px] font-orbitron text-slate-400 mb-2">NOMBRE / ALIAS</label>
+          <input id="candidate-name" type="text" placeholder="Escribe tu nombre o alias"
+            class="w-full px-4 py-4 rounded-xl bg-black/40 border border-slate-700 focus:border-blue-500 outline-none text-white">
+        </div>
+        <div>
+          <label class="block text-[10px] font-orbitron text-slate-400 mb-2">PLATAFORMA PRINCIPAL</label>
+          <select id="candidate-platform" class="w-full px-4 py-4 rounded-xl bg-black/40 border border-slate-700 focus:border-blue-500 outline-none text-white">
+            <option value="">Selecciona una plataforma</option>
+            <option>Discord</option><option>WhatsApp</option><option>Telegram</option><option>Otra</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-8">
+      <div class="flex justify-between mb-2 text-[10px] font-orbitron text-slate-500">
+        <span>EVALUACIÓN</span><span id="evaluation-progress-text">0 / 12</span>
+      </div>
+      <div class="h-2 rounded-full bg-slate-900 overflow-hidden">
+        <div id="evaluation-progress" class="progress-bar h-full bg-blue-500" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div id="questions-container" class="space-y-6"></div>
+
+    <div class="mt-10">
+      <button type="button" onclick="evaluateExam(event)"
+        class="w-full py-5 rounded-xl bg-apc-electric hover:bg-blue-500 text-white font-orbitron text-sm font-bold transition shadow-lg shadow-blue-500/10">
+        <i class="fa-solid fa-chart-line mr-2"></i>EVALUAR RESPUESTAS
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- SECCIÓN RESULTADO -->
+<section id="result-section" class="page-section">
+  <div class="max-w-4xl mx-auto px-5 py-16">
+    <div class="text-center mb-10">
+      <div class="w-20 h-20 mx-auto rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center">
+        <i class="fa-solid fa-file-circle-check text-3xl text-amber-400"></i>
+      </div>
+      <p class="text-[10px] font-orbitron tracking-[.3em] text-amber-400 mt-6">A.P.C. // ADMISSION</p>
+      <h1 class="font-orbitron text-3xl md:text-5xl font-bold text-white mt-3">SOLICITUD GENERADA</h1>
+      <p class="text-slate-500 mt-4">Tu evaluación fue procesada correctamente.</p>
+    </div>
+
+    <div id="result-content"></div>
+
+    <div class="grid md:grid-cols-2 gap-4 mt-6">
+      <button type="button" onclick="copyApplication()"
+        class="py-5 rounded-xl border border-blue-500/40 bg-blue-500/10 text-blue-400 font-orbitron text-xs">
+        <i class="fa-solid fa-copy mr-2"></i>COPIAR SOLICITUD
+      </button>
+
+      <a href="https://chat.whatsapp.com/GsWDWtyh137CcxPDFGqUpW"
+         target="_blank" rel="noopener noreferrer"
+         class="py-5 rounded-xl bg-apc-gold hover:bg-yellow-400 text-black font-orbitron text-xs font-bold text-center block">
+        <i class="fa-brands fa-whatsapp mr-2"></i>UNIRME A RECEPCIÓN
+      </a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- MODAL ACCESO A DEPARTAMENTO -->
+<div id="dept-login-overlay" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md items-center justify-center p-5">
+  <div class="w-full max-w-md apc-card rounded-2xl p-7">
+    <div class="text-center">
+      <i class="fa-solid fa-lock text-3xl text-blue-400"></i>
+      <h2 id="dept-login-title" class="mt-5 font-orbitron text-xl text-white">ACCESO RESTRINGIDO</h2>
+      <p class="mt-2 text-sm text-slate-500">Ingresa la clave de agente para este departamento.</p>
+    </div>
+    <input id="dept-passcode" type="password" autocomplete="off" placeholder="Clave de Departamento"
+      class="mt-7 w-full px-4 py-4 rounded-xl bg-black/50 border border-slate-700 text-white outline-none focus:border-blue-400 font-code text-center">
+    <div class="grid grid-cols-2 gap-3 mt-4">
+      <button onclick="closeDeptLogin()" class="py-4 rounded-xl border border-slate-700 text-slate-400 font-orbitron text-xs">CANCELAR</button>
+      <button onclick="verifyDeptLogin()" class="py-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-orbitron text-xs font-bold">ENTRAR</button>
+    </div>
+  </div>
+</div>
+
+<!-- ARGOS LOGIN -->
+<div id="argos-overlay" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md items-center justify-center p-5">
+  <div class="w-full max-w-md apc-card rounded-2xl p-7">
+    <div class="text-center">
+      <i class="fa-solid fa-lock text-3xl text-amber-400"></i>
+      <h2 class="mt-5 font-orbitron text-xl text-white">ARGOS // RESTRICTED</h2>
+      <p class="mt-2 text-sm text-slate-500">Introduce la clave de acceso.</p>
+    </div>
+    <input id="argos-code" type="password" autocomplete="off" placeholder="Código de acceso"
+      class="mt-7 w-full px-4 py-4 rounded-xl bg-black/50 border border-slate-700 text-white outline-none focus:border-amber-400 font-code text-center">
+    <div class="grid grid-cols-2 gap-3 mt-4">
+      <button onclick="closeArgosLogin()" class="py-4 rounded-xl border border-slate-700 text-slate-400 font-orbitron text-xs">CANCELAR</button>
+      <button onclick="loginArgos()" class="py-4 rounded-xl bg-amber-500 hover:bg-yellow-400 text-black font-orbitron text-xs font-bold">ACCEDER</button>
+    </div>
+  </div>
+</div>
+
+<!-- ARGOS PANEL DE CONTROL -->
+<div id="argos-panel" class="hidden fixed inset-0 z-50 bg-black overflow-y-auto">
+  <div class="max-w-7xl mx-auto px-5 py-8">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-5 border-b border-slate-800 pb-6">
+      <div>
+        <p class="text-[9px] text-amber-400 font-orbitron tracking-[.3em]">ARGOS // CENTRAL DE ADMINISTRACIÓN</p>
+        <h2 class="mt-2 text-3xl font-orbitron font-bold text-white">PANEL DE CONTROL</h2>
+      </div>
+      <button onclick="closeArgosPanel()" class="px-5 py-3 rounded-xl border border-slate-700 text-slate-400 font-orbitron text-xs">
+        <i class="fa-solid fa-xmark mr-2"></i>CERRAR
+      </button>
+    </div>
+
+    <!-- NAVEGACIÓN DENTRO DE ARGOS -->
+    <div class="flex flex-wrap gap-4 mt-6">
+      <button onclick="switchArgosTab('apps')" id="tab-btn-apps" class="px-5 py-3 rounded-xl font-orbitron text-xs font-bold bg-amber-500 text-black">
+        <i class="fa-solid fa-users mr-2"></i>SOLICITUDES DE INGRESO
+      </button>
+      <button onclick="switchArgosTab('reports')" id="tab-btn-reports" class="px-5 py-3 rounded-xl font-orbitron text-xs font-bold border border-slate-700 text-slate-300">
+        <i class="fa-solid fa-shield-cat mr-2"></i>CASOS REPORTADOS
+      </button>
+      <button onclick="switchArgosTab('announcements')" id="tab-btn-announcements" class="px-5 py-3 rounded-xl font-orbitron text-xs font-bold border border-slate-700 text-slate-300">
+        <i class="fa-solid fa-bullhorn mr-2"></i>PUBLICAR COMUNICADO
+      </button>
+    </div>
+
+    <!-- VISTA 1: SOLICITUDES -->
+    <div id="argos-tab-apps" class="mt-6">
+      <div id="argos-applications" class="space-y-3"></div>
+    </div>
+
+    <!-- VISTA 2: REPORTES -->
+    <div id="argos-tab-reports" class="hidden mt-6">
+      <div class="apc-card rounded-2xl p-6">
+        <h3 class="font-orbitron text-sm text-white mb-6">CASOS Y DENUNCIAS ENVIADAS</h3>
+        <div id="argos-reports-list" class="space-y-4"></div>
+      </div>
+    </div>
+
+    <!-- VISTA 3: PUBLICADOR DE COMUNICADOS -->
+    <div id="argos-tab-announcements" class="hidden mt-6">
+      <div class="apc-card rounded-2xl p-6 max-w-2xl">
+        <h3 class="font-orbitron text-sm text-amber-400 mb-4"><i class="fa-solid fa-bullhorn mr-2"></i>NUEVO COMUNICADO ADMINISTRATIVO</h3>
+        <textarea id="new-announcement-text" rows="4" placeholder="Escribe la directiva o comunicado oficial aquí..."
+          class="w-full p-4 rounded-xl bg-black/50 border border-slate-700 text-white text-sm outline-none focus:border-amber-400 resize-none"></textarea>
+        <button onclick="publishAnnouncement()" class="mt-4 px-6 py-3 rounded-xl bg-amber-500 hover:bg-yellow-400 text-black font-orbitron text-xs font-bold">
+          PUBLICAR COMUNICADO
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = "https://zgvucrgtjfozwfnbhawu.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpndnVjcmd0amZvendmbmJoYXd1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIzNTYxMjUsImV4cCI6MjEwNzkzMjEyNX0.8UJwfpTqQKho2dVo_zn8oiKeUh2pJA0-wDzKGJ84olo";
+const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const ARGOS_CODE="ARGOS-1.1";
+let secretClicks=0;
+let secretClickTimer=null;
+let targetDeptForLogin = "";
+let currentOpenDept = "";
+
+const departments={
+  "AEGIS-1":{icon:"fa-shield-halved",description:"Atención de alta prioridad y contacto directo.",code:"AG1",passcode:"AEGIS-2026"},
+  "CORER":{icon:"fa-bolt",description:"Operaciones de respuesta estratégica y rápida.",code:"CR1",passcode:"CORER-2026"},
+  "D.I.P.M.":{icon:"fa-user-shield",description:"Investigación y protección de menores.",code:"DP1",passcode:"DIPM-2026"},
+  "SPECTRA":{icon:"fa-satellite-dish",description:"Comunicación e inteligencia estratégica.",code:"SP1",passcode:"SPECTRA-2026"},
+  "C.A.V.":{icon:"fa-hand-holding-heart",description:"Atención y acompañamiento de víctimas.",code:"CV1",passcode:"CAV-2026"},
+  "DEBATE":{icon:"fa-comments",description:"Análisis, evaluación y debate.",code:"DB1",passcode:"DEBATE-2026"},
+  "IRON SENTINEL":{icon:"fa-shield",description:"Protección y seguridad tecnológica.",code:"IS1",passcode:"IRON-2026"},
+  "VANGUARD":{icon:"fa-person-military-pointing",description:"Apoyo operativo y primera respuesta.",code:"VG1",passcode:"VANGUARD-2026"}
+};
+
+const questions=[
+ {text:"¿Qué aspecto consideras más importante dentro de A.P.C.?",options:[["A","Protección y seguridad.",["AEGIS-1","IRON SENTINEL"]],["B","Información y estrategia.",["SPECTRA","DEBATE"]],["C","Tecnología y prevención.",["IRON SENTINEL","CORER"]],["D","Atención y protección humana.",["C.A.V.","D.I.P.M."]]]},
+ {text:"Si aparece una situación urgente, ¿qué harías primero?",options:[["A","Actuar y controlar la situación.",["CORER","VANGUARD"]],["B","Analizar la información disponible.",["SPECTRA","DEBATE"]],["C","Proteger a las personas involucradas.",["AEGIS-1","C.A.V."]],["D","Revisar posibles riesgos tecnológicos.",["IRON SENTINEL","CORER"]]]},
+ {text:"¿Qué tipo de actividad te interesa más?",options:[["A","Investigación.",["D.I.P.M.","SPECTRA"]],["B","Operaciones.",["CORER","VANGUARD"]],["C","Comunicación.",["SPECTRA","DEBATE"]],["D","Protección.",["AEGIS-1","IRON SENTINEL"]]]},
+ {text:"¿Cómo trabajarías con información sensible?",options:[["A","La verificaría antes de utilizarla.",["SPECTRA","DEBATE"]],["B","La protegería y limitaría su acceso.",["AEGIS-1","IRON SENTINEL"]],["C","La utilizaría para investigar el caso.",["D.I.P.M.","SPECTRA"]],["D","La comunicaría únicamente cuando sea necesario.",["C.A.V.","AEGIS-1"]]]},
+ {text:"¿Cuál de estas habilidades te representa mejor?",options:[["A","Liderazgo.",["VANGUARD","AEGIS-1"]],["B","Análisis.",["DEBATE","SPECTRA"]],["C","Empatía.",["C.A.V.","D.I.P.M."]],["D","Resolución rápida.",["CORER","VANGUARD"]]]},
+ {text:"¿Qué harías ante un posible riesgo para un menor?",options:[["A","Investigar y documentar el caso.",["D.I.P.M.","SPECTRA"]],["B","Buscar protección inmediata.",["AEGIS-1","D.I.P.M."]],["C","Brindar apoyo a la persona afectada.",["C.A.V.","D.I.P.M."]],["D","Evaluar primero la información.",["SPECTRA","DEBATE"]]]},
+ {text:"¿Qué papel prefieres desempeñar?",options:[["A","Coordinación operativa.",["VANGUARD","CORER"]],["B","Análisis estratégico.",["SPECTRA","DEBATE"]],["C","Protección.",["AEGIS-1","IRON SENTINEL"]],["D","Atención directa.",["C.A.V.","D.I.P.M."]]]},
+ {text:"¿Qué haces cuando dos versiones de un caso no coinciden?",options:[["A","Comparo evidencias.",["SPECTRA","DEBATE"]],["B","Investigo más.",["D.I.P.M.","SPECTRA"]],["C","Consulto con otros integrantes.",["DEBATE","AEGIS-1"]],["D","Actúo si existe un riesgo inmediato.",["CORER","AEGIS-1"]]]},
+ {text:"¿Qué característica te parece indispensable en un integrante?",options:[["A","Responsabilidad.",["AEGIS-1","VANGUARD"]],["B","Discreción.",["SPECTRA","IRON SENTINEL"]],["C","Empatía.",["C.A.V.","D.I.P.M."]],["D","Capacidad de análisis.",["DEBATE","SPECTRA"]]]},
+ {text:"¿Cómo responderías ante una amenaza digital?",options:[["A","Protegería los sistemas.",["IRON SENTINEL","AEGIS-1"]],["B","Investigaría el origen.",["SPECTRA","IRON SENTINEL"]],["C","Coordinaría una respuesta.",["CORER","VANGUARD"]],["D","Evaluaría el alcance.",["DEBATE","SPECTRA"]]]},
+ {text:"¿Qué consideras más importante al trabajar en equipo?",options:[["A","Comunicación.",["SPECTRA","C.A.V."]],["B","Disciplina.",["AEGIS-1","VANGUARD"]],["C","Organización.",["CORER","DEBATE"]],["D","Confianza.",["C.A.V.","AEGIS-1"]]]},
+ {text:"¿Qué esperas aportar a A.P.C.?",options:[["A","Protección y seguridad.",["AEGIS-1","IRON SENTINEL"]],["B","Información y estrategia.",["SPECTRA","DEBATE"]],["C","Tecnología y prevención.",["IRON SENTINEL","CORER"]],["D","Atención y protección humana.",["C.A.V.","D.I.P.M."]]]}
+];
+
+function showSection(id){
+  document.querySelectorAll(".page-section").forEach(s=>s.classList.remove("active"));
+  const target=document.getElementById(id);
+  if(target) target.classList.add("active");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function renderLobbyDepartments(){
+  document.getElementById("lobby-department-cards").innerHTML=Object.entries(departments).map(([name,data])=>`
+    <div onclick="requestDeptAccess('${name}')" class="apc-card rounded-2xl p-6 cursor-pointer hover:scale-[1.02] transition">
+      <div class="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
+        <i class="fa-solid ${data.icon} text-blue-400 text-xl"></i>
+      </div>
+      <h3 class="mt-5 font-orbitron font-bold text-base text-white">${name}</h3>
+      <p class="mt-2 text-xs text-slate-500">${data.description}</p>
+      <span class="inline-block mt-4 text-[9px] font-orbitron text-blue-400"><i class="fa-solid fa-lock mr-1"></i>ACCESO AGENTES</span>
+    </div>`).join("");
+}
+
+function requestDeptAccess(deptKey){
+  targetDeptForLogin = deptKey;
+  document.getElementById("dept-login-title").textContent = `ACCESO // ${deptKey}`;
+  document.getElementById("dept-passcode").value = "";
+  document.getElementById("dept-login-overlay").classList.remove("hidden");
+  document.getElementById("dept-login-overlay").classList.add("flex");
+  setTimeout(()=>document.getElementById("dept-passcode").focus(),100);
+}
+
+function closeDeptLogin(){
+  document.getElementById("dept-login-overlay").classList.add("hidden");
+  document.getElementById("dept-login-overlay").classList.remove("flex");
+}
+
+function verifyDeptLogin(){
+  const input = document.getElementById("dept-passcode").value.trim();
+  const required = departments[targetDeptForLogin]?.passcode;
+  if(input === required){
+    closeDeptLogin();
+    openDepartmentDetail(targetDeptForLogin);
+  } else {
+    alert("Clave de departamento incorrecta.");
+  }
+}
+
+async function openDepartmentDetail(deptKey){
+  currentOpenDept = deptKey;
+  const dept = departments[deptKey];
+  if(!dept) return;
+  document.getElementById("dept-detail-title").textContent = deptKey;
+  document.getElementById("dept-detail-desc").textContent = dept.description;
+  document.getElementById("dept-detail-icon").innerHTML = `<i class="fa-solid ${dept.icon}"></i>`;
+
+  showSection("department-detail-section");
+  await loadDepartmentReports(deptKey);
+  await loadDepartmentMessages(deptKey);
+}
+
+async function loadDepartmentReports(deptKey){
+  const container = document.getElementById("dept-assigned-reports");
+  container.innerHTML = `<p class="text-xs text-slate-500"><i class="fa-solid fa-spinner animate-spin mr-2"></i>Cargando datos...</p>`;
+
+  const { data: reports, error } = await _supabase
+    .from('reports')
+    .select('*')
+    .eq('target_department', deptKey)
+    .order('created_at', { ascending: false });
+
+  if(error || !reports || reports.length === 0){
+    container.innerHTML = `<div class="p-6 text-center text-slate-500 text-xs">No hay casos pendientes o asignados a ${deptKey}.</div>`;
+    return;
+  }
+
+  container.innerHTML = reports.map(r => {
+    const statusColors = {
+      'NEW': 'bg-amber-500/10 border-amber-500/30 text-amber-400',
+      'ACTIVO': 'bg-blue-500/10 border-blue-500/30 text-blue-400',
+      'RESUELTO': 'bg-green-500/10 border-green-500/30 text-green-400',
+      'ANULADO': 'bg-red-500/10 border-red-500/30 text-red-400'
+    };
+    const currentStatus = r.status || 'NEW';
+    let evidenceHtml = '';
+    if(r.evidence_url){
+      const isImg = r.evidence_url.match(/\.(jpeg|jpg|gif|png|webp)$/i);
+      if(isImg){
+        evidenceHtml = `<div class="mt-2"><p class="text-[10px] text-slate-400 font-orbitron mb-1">EVIDENCIA ADJUNTA:</p><a href="${r.evidence_url}" target="_blank"><img src="${r.evidence_url}" class="max-h-48 rounded-lg border border-slate-700 hover:opacity-90"></a></div>`;
+      } else {
+        evidenceHtml = `<a href="${r.evidence_url}" target="_blank" class="text-xs font-orbitron text-red-400 underline block mt-2"><i class="fa-solid fa-file-pdf mr-1"></i>VER DOCUMENTO ADJUNTO</a>`;
+      }
+    }
+
+    return `
+      <div class="p-5 rounded-xl bg-black/50 border border-slate-800 space-y-3">
+        <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+          <span class="text-xs font-orbitron font-bold text-white">${r.reporter_type}</span>
+          <span class="px-2 py-0.5 rounded text-[8px] font-orbitron border ${statusColors[currentStatus]}">${currentStatus}</span>
+        </div>
+        <p class="text-xs text-slate-300 whitespace-pre-wrap">${r.description}</p>
+        ${evidenceHtml}
+        <div class="text-[10px] text-slate-400 bg-black/40 p-3 rounded-lg flex justify-between items-center">
+          <span>Contacto: <strong class="text-blue-400">${r.contact_info}</strong></span>
+          <select onchange="updateReportStatus('${r.id}', this.value, '${deptKey}')" class="bg-black border border-slate-700 text-xs text-white rounded px-2 py-1 outline-none">
+            <option value="NEW" ${currentStatus==='NEW'?'selected':''}>🟡 PENDIENTE</option>
+            <option value="ACTIVO" ${currentStatus==='ACTIVO'?'selected':''}>🔵 EN PROCESO (ACTIVO)</option>
+            <option value="RESUELTO" ${currentStatus==='RESUELTO'?'selected':''}>🟢 RESUELTO</option>
+            <option value="ANULADO" ${currentStatus==='ANULADO'?'selected':''}>🔴 ANULADO</option>
+          </select>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+async function updateReportStatus(reportId, newStatus, deptKey){
+  await _supabase.from('reports').update({ status: newStatus }).eq('id', reportId);
+  await loadDepartmentReports(deptKey);
+}
+
+// ENVIAR REPORTE CON CAPTURA/EVIDENCIA
+async function submitReport(event){
+  event.preventDefault();
+  const mode = document.getElementById("report-mode").value;
+  const name = document.getElementById("report-name").value.trim();
+  const role = document.getElementById("report-role").value;
+  const department = document.getElementById("report-department").value;
+  const description = document.getElementById("report-desc").value.trim();
+  const accused = document.getElementById("report-accused").value.trim();
+  const contact = document.getElementById("report-contact").value.trim();
+  const fileInput = document.getElementById("report-file");
+
+  if(!description){ alert("Por favor, describe los hechos del caso."); return; }
+
+  let evidenceUrl = null;
+  if(fileInput.files.length > 0){
+    const file = fileInput.files[0];
+    const fileName = `evidence_${Date.now()}_${file.name}`;
+    const { data, error } = await _supabase.storage.from('evidences').upload(fileName, file);
+    if(!error){
+      const { data: publicData } = _supabase.storage.from('evidences').getPublicUrl(fileName);
+      evidenceUrl = publicData.publicUrl;
+    }
+  }
+
+  const reportData = {
+    reporter_type: mode === "anonimo" ? "ANÓNIMO" : (name || "IDENTIFICADO"),
+    is_anonymous: mode === "anonimo",
+    contact_info: contact || "No proporcionado",
+    target_department: department,
+    description: `[Rol: ${role}] [Acusado: ${accused || 'N/A'}]\n\n${description}`,
+    status: "NEW",
+    evidence_url: evidenceUrl
+  };
+
+  const { error } = await _supabase.from('reports').insert([reportData]);
+  if(!error){
+    alert("¡Reporte con evidencias enviado a A.P.C.!");
+    document.getElementById("report-form").reset();
+    showSection("home-section");
+  } else alert("Error al enviar el reporte.");
+}
+
+// MÓDULO DE CHAT INTERNO ENTRE AGENTES CON PREVISUALIZACIÓN E IDENTIFICACIÓN
+async function loadDepartmentMessages(deptKey){
+  const chatContainer = document.getElementById("agent-chat-messages");
+  
+  // Cargar mensajes dirigidos a este departamento o GLOBALES
+  const { data: msgs } = await _supabase
+    .from('department_messages')
+    .select('*')
+    .or(`department.eq.${deptKey},target_department.eq.${deptKey},target_department.eq.GLOBAL`)
+    .order('created_at', { ascending: true });
+  
+  if(msgs && msgs.length > 0){
+    chatContainer.innerHTML = msgs.map(m => {
+      let mediaPreview = '';
+      if(m.file_url){
+        const isImg = m.file_url.match(/\.(jpeg|jpg|gif|png|webp)$/i);
+        if(isImg){
+          mediaPreview = `<div class="mt-2"><a href="${m.file_url}" target="_blank"><img src="${m.file_url}" class="max-h-40 rounded border border-slate-700 hover:opacity-90"></a></div>`;
+        } else {
+          mediaPreview = `<a href="${m.file_url}" target="_blank" class="text-[9px] text-blue-400 underline block mt-2"><i class="fa-solid fa-file-arrow-down mr-1"></i>Abrir Documento Adjunto</a>`;
+        }
+      }
+
+      const isGlobal = m.target_department === 'GLOBAL';
+      const targetBadge = isGlobal ? `<span class="px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 text-[8px] font-orbitron">GLOBAL</span>` : `<span class="px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 text-[8px] font-orbitron">PARA: ${m.target_department}</span>`;
+
+      return `
+        <div class="p-3 rounded-xl bg-black/40 border border-slate-800 space-y-1">
+          <div class="flex justify-between items-center">
+            <div class="flex items-center gap-2">
+              <span class="font-orbitron text-blue-400 font-bold text-[11px]">${m.agent_alias}</span>
+              <span class="text-[9px] text-slate-500">[${m.agent_group || 'Agente'}]</span>
+              ${targetBadge}
+            </div>
+            <span class="text-[8px] font-code text-slate-500">${new Date(m.created_at).toLocaleTimeString()}</span>
+          </div>
+          <p class="text-slate-300 text-xs">${m.message || ''}</p>
+          ${mediaPreview}
+        </div>`;
+    }).join("");
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  } else {
+    chatContainer.innerHTML = `<p class="text-slate-500 text-[10px] text-center">No hay mensajes en el canal por el momento.</p>`;
+  }
+}
+
+async function sendAgentMessage(){
+  const alias = document.getElementById("agent-alias").value.trim();
+  const group = document.getElementById("agent-group").value.trim();
+  const targetDept = document.getElementById("agent-chat-target").value;
+  const text = document.getElementById("agent-chat-text").value.trim();
+  const fileInput = document.getElementById("agent-chat-file");
+
+  if(!alias || !group){
+    alert("Para enviar mensajes, completa tu Alias y Rango/Grupo en tu expediente (arriba a la izquierda).");
+    document.getElementById("agent-alias").focus();
+    return;
+  }
+
+  if(!text && fileInput.files.length === 0){ alert("Escribe un mensaje o adjunta un archivo."); return; }
+
+  let fileUrl = null;
+  if(fileInput.files.length > 0){
+    const file = fileInput.files[0];
+    const fileName = `agent_doc_${Date.now()}_${file.name}`;
+    const { data, error } = await _supabase.storage.from('evidences').upload(fileName, file);
+    if(!error){
+      const { data: publicData } = _supabase.storage.from('evidences').getPublicUrl(fileName);
+      fileUrl = publicData.publicUrl;
+    }
+  }
+
+  await _supabase.from('department_messages').insert([{
+    department: currentOpenDept,
+    target_department: targetDept,
+    agent_alias: alias,
+    agent_group: group,
+    message: text,
+    file_url: fileUrl
+  }]);
+
+  document.getElementById("agent-chat-text").value = "";
+  document.getElementById("agent-chat-file").value = "";
+  await loadDepartmentMessages(currentOpenDept);
+}
+
+function renderQuestions(){
+  document.getElementById("questions-container").innerHTML=questions.map((q,qi)=>`
+    <div class="question-card rounded-2xl p-5 md:p-7">
+      <div class="flex gap-4 items-start">
+        <div class="w-14 h-14 rounded-xl border border-blue-500/30 bg-blue-500/5 flex items-center justify-center text-blue-400 font-code flex-shrink-0">${qi+1}</div>
+        <div class="flex-1">
+          <h3 class="font-orbitron text-base md:text-lg text-white">${q.text}</h3>
+          <div class="mt-6 space-y-3">
+            ${q.options.map((o,oi)=>`
+              <label class="option-label rounded-xl p-4 flex items-center gap-4">
+                <input type="radio" class="option-radio" name="question-${qi}" value="${oi}" onchange="updateProgress()">
+                <span class="font-code text-blue-400 text-sm w-5">${o[0]}</span>
+                <span class="text-slate-300 text-sm">${o[1]}</span>
+              </label>`).join("")}
+          </div>
+        </div>
+      </div>
+    </div>`).join("");
+}
+
+function updateProgress(){
+  let answered=0;
+  for(let i=0;i<questions.length;i++){
+    if(document.querySelector(`input[name="question-${i}"]:checked`)) answered++;
+  }
+  document.getElementById("evaluation-progress").style.width=(answered/questions.length*100)+"%";
+  document.getElementById("evaluation-progress-text").textContent=`${answered} / ${questions.length}`;
+}
+
+/* ARGOS LOGIN Y PANELES */
+document.getElementById("apc-secret-trigger").addEventListener("click",()=>{
+  secretClicks++; clearTimeout(secretClickTimer);
+  secretClickTimer=setTimeout(()=>secretClicks=0,2000);
+  if(secretClicks>=5){ secretClicks=0; openArgosLogin(); }
+});
+
+function openArgosLogin(){
+  document.getElementById("argos-overlay").classList.remove("hidden");
+  document.getElementById("argos-overlay").classList.add("flex");
+}
+function closeArgosLogin(){
+  document.getElementById("argos-overlay").classList.add("hidden");
+  document.getElementById("argos-overlay").classList.remove("flex");
+}
+function loginArgos(){
+  if(document.getElementById("argos-code").value.trim()!==ARGOS_CODE){ alert("Código incorrecto."); return; }
+  closeArgosLogin(); openArgosPanel();
+}
+function openArgosPanel(){
+  document.getElementById("argos-panel").classList.remove("hidden");
+  loadArgosData();
+}
+function closeArgosPanel(){ document.getElementById("argos-panel").classList.add("hidden"); }
+
+function switchArgosTab(tab){
+  document.getElementById("argos-tab-apps").classList.add("hidden");
+  document.getElementById("argos-tab-reports").classList.add("hidden");
+  document.getElementById("argos-tab-announcements").classList.add("hidden");
+
+  if(tab === 'apps') document.getElementById("argos-tab-apps").classList.remove("hidden");
+  else if(tab === 'reports') document.getElementById("argos-tab-reports").classList.remove("hidden");
+  else if(tab === 'announcements') document.getElementById("argos-tab-announcements").classList.remove("hidden");
+}
+
+async function loadArgosData(){
+  const { data: apps } = await _supabase.from('applications').select('*').order('created_at',{ascending:false});
+  if(apps){
+    document.getElementById("argos-applications").innerHTML = apps.map(a=>`
+      <div class="p-4 rounded-xl bg-black/40 border border-slate-800 flex justify-between items-center">
+        <div><p class="font-code text-blue-400 text-xs">${a.folio} - ${a.name}</p><p class="text-xs text-slate-400">${a.department} · ${a.platform}</p></div>
+        <span class="px-3 py-1 rounded bg-amber-500/10 text-amber-400 text-[10px] font-orbitron">${a.flag}</span>
+      </div>`).join("");
+  }
+
+  const { data: reports } = await _supabase.from('reports').select('*').order('created_at',{ascending:false});
+  if(reports){
+    document.getElementById("argos-reports-list").innerHTML = reports.map(r=>`
+      <div class="p-4 rounded-xl bg-black/40 border border-red-500/20 space-y-2">
+        <div class="flex justify-between items-center"><span class="text-xs font-orbitron text-red-400">${r.reporter_type}</span><span class="text-[9px] font-code text-slate-500">${new Date(r.created_at).toLocaleString()}</span></div>
+        <p class="text-xs text-slate-300 whitespace-pre-wrap">${r.description}</p>
+        ${r.evidence_url ? `<a href="${r.evidence_url}" target="_blank" class="text-xs text-red-400 underline block"><i class="fa-solid fa-paperclip mr-1"></i>Ver Evidencia Cargada</a>` : ''}
+      </div>`).join("");
+  }
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
+  renderLobbyDepartments();
+  renderQuestions();
+  updateProgress();
+});
+</script>
+
+</body>
+</html>
